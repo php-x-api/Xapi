@@ -1,0 +1,6 @@
+{
+    "name": "php-x-api/xapi",
+    "require": {
+        "monolog/monolog": "1.0.*"
+    }
+}

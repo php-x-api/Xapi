@@ -1,5 +1,5 @@
 {
-    "name": "pphp-x-api/Xapi",
+    "name": "php-x-api/Xapi",
     "keywords": ["api"],
     "license" : "BSD",
     "autoload": {

@@ -1,6 +1,8 @@
 {
-    "name": "php-x-api/xapi",
-    "require": {
-        "monolog/monolog": "1.0.*"
+    "name": "pphp-x-api/Xapi",
+    "keywords": ["api"],
+    "license" : "BSD",
+    "autoload": {
+        "psr-4": {"Xapi\\": "src/Xapi"}
     }
 }

@@ -1,19 +1,19 @@
 <?php
 namespace Xapi;
-class Xapi
+class Xapi extends Api
 {
-    function __construct()
+    #设置请求参数
+    public function setRequestData($param)
     {
+        $this->param = $param;
     }
 
-    public function setRequestData()
+
+
+    #初始化 启动API
+    public function init()
     {
-
-    }
-
-    public function response()
-    {
-
+        $rs = new Request($this->param);
     }
 }
 ?>

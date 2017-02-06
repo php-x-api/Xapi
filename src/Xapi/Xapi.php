@@ -2,10 +2,18 @@
 namespace Xapi;
 class Xapi
 {
+    function __construct()
+    {
+    }
 
-  function __construct()
-  {
-      echo "string";
-  }
+    public function setRequestData()
+    {
+
+    }
+
+    public function response()
+    {
+
+    }
 }
- ?>
+?>

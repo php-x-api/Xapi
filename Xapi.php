@@ -5,25 +5,37 @@ use Xapi\Response as Response;
 
 class Xapi
 {
-    public $ApiPath;
+    private $ApiPath;
 
-    public $loader;
+    public $Loader;
 
     private $RequestParam;
+
+    public $Request;
+
+
 
     /**
      * Xapi constructor.
      * @param $RequestParam
      */
-    public function __construct($ApiPath = null)
+    function __construct($ApiPath)
     {
-        var_dump(getcwd().'/'.$ApiPath);
-        var_dump($this->ApiPath);
+        $this->ApiPath = getcwd().'/'.$ApiPath;
         spl_autoload_register("Xapi\\XapiAutoLoad");
     }
 
-    public function request(){
-        return new Request();
+    public function Run($RequestParam = null){
+        if(empty($RequestParam)){
+            if(empty($_POST) || !is_array($_POST)){
+                $_POST = array();
+            }
+            $_POST['api'] = $_GET['api'];
+            $this->RequestParam = $_POST;
+        }else{
+            $this->RequestParam = $RequestParam;
+        }
+        $this->Request = new Request($this->RequestParam,$this->ApiPath);
     }
 
     function __destruct()

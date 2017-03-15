@@ -2,6 +2,7 @@
 namespace Xapi;
 use Xapi\Request as Request;
 use Xapi\Response as Response;
+use Xapi\Api;
 
 class Xapi
 {
@@ -22,32 +23,28 @@ class Xapi
     function __construct($ApiPath)
     {
         $this->ApiPath = getcwd().'/'.$ApiPath;
-        spl_autoload_register("Xapi\\XapiAutoLoad");
+        require_once dirname(__FILE__).'/Request/Request.php';
+        require_once dirname(__FILE__).'/Api/Api.php';
     }
 
     public function Run($RequestParam = null){
-        if(empty($RequestParam)){
-            if(empty($_POST) || !is_array($_POST)){
-                $_POST = array();
+        if(isset($_GET['api'])){
+            if(empty($RequestParam)){
+                if(empty($_POST) || !is_array($_POST)){
+                    $_POST = array();
+                }
+                $this->RequestParam = $_POST;
+            }else{
+                $this->RequestParam = $RequestParam;
             }
-            $_POST['api'] = $_GET['api'];
-            $this->RequestParam = $_POST;
+            $this->RequestParam['api'] = $_GET['api'];
+            $this->Request = new Request($this->RequestParam,$this->ApiPath);
         }else{
-            $this->RequestParam = $RequestParam;
+            //没有定义请求的API 抛出异常
         }
-        $this->Request = new Request($this->RequestParam,$this->ApiPath);
-    }
-
-    function __destruct()
-    {
-        spl_autoload_unregister("Xapi\\XapiAutoLoad");
     }
 }
 
-function XapiAutoLoad ($class) {
-    $path = explode('\\',$class);
-    require_once dirname(__FILE__).'./../'.implode('/',$path).'/'.end($path).'.php';
-}
 
 
 ?>

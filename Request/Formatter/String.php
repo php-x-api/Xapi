@@ -13,12 +13,13 @@ class String {
 
     }
 
-    function maxlength()
+    public function maxlength()
     {
 
     }
 
-    function minlength(){
+    public function minlength()
+    {
 
     }
 }

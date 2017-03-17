@@ -47,6 +47,7 @@ class Request
     private function getApiRule($class,$func)
     {
         $Rule = $class->ApiParamRules();
+        $VerifyState = true;
         if(isset($Rule[$func]) && is_array($Rule[$func]) && count($Rule[$func]) > 0){
             foreach($Rule[$func] as $k=>$v){
                 if($v['type'] == 'array'){
@@ -56,12 +57,20 @@ class Request
                     if($Verify['state'] == true){
                         $class->$k = $this->RequestParam[$k];
                     }else{
-                        echo "错误";
+                        $VerifyState = false;
+                        break;
                     }
                 }
             }
         }
-        call_user_func(array($class,$func));
+        if($VerifyState){
+            //如果没有参数验证失败 则执行API
+            call_user_func(array($class,$func));
+        }else{
+            //有参数验证未通过 返回错误
+            return $Verify;
+        }
+
     }
 
     private function VerifyParam($ParamName,$Param,$ParamRule){
@@ -69,7 +78,7 @@ class Request
             if(isset($Param[$ParamName])){
                 return array('state'=>true);
             }else{
-                return array('state'=>false);
+                return array('state'=>false,'err'=>[]);
             }
         }
     }

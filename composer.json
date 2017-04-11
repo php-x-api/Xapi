@@ -1,7 +1,5 @@
 {
     "name": "php-x-api/Xapi",
-    "keywords": ["api"],
-    "license" : "BSD",
     "autoload": {
         "psr-4": {"Xapi\\": "src"}
     }

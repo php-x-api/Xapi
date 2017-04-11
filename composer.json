@@ -1,6 +1,6 @@
 {
     "name": "php-x-api/Xapi",
     "autoload": {
-        "psr-4": {"Xapi\\": "src"}
+        "psr-4": {"Xapi\\": "src/Xapi"}
     }
 }

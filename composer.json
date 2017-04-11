@@ -3,6 +3,6 @@
     "keywords": ["api"],
     "license" : "BSD",
     "autoload": {
-        "psr-4": {"Xapi\\": "src}
+        "psr-4": {"Xapi\\": "src"}
     }
 }

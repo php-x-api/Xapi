@@ -1,7 +1,5 @@
 <?php
 namespace Xapi;
-use Xapi\Request\Request;
-
 class Xapi
 {
 
@@ -13,20 +11,15 @@ class Xapi
 
     private $Response_Instance = null;
 
-    private function init(){
-        $this->Request();
-        $this->Response();
-    }
 
     public function __construct($ApiPath)
     {
         $this->ApiPath = getcwd().'/'.$ApiPath;
-        $this->init();
     }
 
     public function Request(){
         if($this->Request_Instance === null){
-            return $this->Request_Instance = new Request();
+            return $this->Request_Instance = new Request($this->RequestParam,$this->ApiPath);
         }else{
             return $this->Request_Instance;
         }
@@ -39,7 +32,6 @@ class Xapi
             return $this->Response_Instance;
         }
     }
-
 
     public function Run(array $RequestParam = array()){
         if(empty($RequestParam)){
@@ -55,7 +47,7 @@ class Xapi
         }else{
             $this->RequestParam['api'] = $_GET['api'];
         }
-        $this->init();
+        $this->Response()->ResponseData  = $this->Request()->ReturnData;
     }
 }
 

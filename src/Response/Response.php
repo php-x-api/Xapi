@@ -17,6 +17,6 @@ class Response
 
     public function output(){
         $this->ououtputDatatput['data'] = $this->ResponseData;
-        echo json_encode($this->outputData);
+        echo json_encode($this->ououtputDatatput);
     }
 }

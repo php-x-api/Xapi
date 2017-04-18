@@ -3,17 +3,20 @@ namespace Xapi;
 class Response
 {
     public $ResponseData;
-    private $output;
+
+    private $outputData;
+
     public function setMsg($msg){
-        $this->output['msg'] = $msg;
+        $this->outputData['msg'] = $msg;
 
     }
 
     public function setCode($code){
-        $this->output['code'] = $code;
+        $this->outputData['code'] = $code;
     }
 
     public function output(){
+        $this->ououtputDatatput['data'] = $this->ResponseData;
         echo json_encode($this->output);
     }
 }

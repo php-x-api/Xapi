@@ -1,6 +1,6 @@
 <?php
 
-abstract class Api  {
+abstract class Api   {
     public $entity = null;
 
     static function init(){

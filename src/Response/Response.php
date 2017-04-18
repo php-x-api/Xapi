@@ -4,15 +4,15 @@ class Response
 {
     public $ResponseData;
 
-    private $outputData;
+    private $ououtputDatatput;
 
     public function setMsg($msg){
-        $this->outputData['msg'] = $msg;
+        $this->ououtputDatatput['msg'] = $msg;
 
     }
 
     public function setCode($code){
-        $this->outputData['code'] = $code;
+        $this->ououtputDatatput['code'] = $code;
     }
 
     public function output(){

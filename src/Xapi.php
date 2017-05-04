@@ -7,30 +7,16 @@ class Xapi
 
     private $RequestParam;
 
-    private $Request_Instance = null;
-
-    private $Response_Instance = null;
-
-
     public function __construct($ApiPath)
     {
-        $this->ApiPath = getcwd().'/'.$ApiPath;
+        $this->ApiPath = getcwd().DIRECTORY_SEPARATOR.$ApiPath;
+        $this->Load();
     }
 
-    public function Request(){
-        if($this->Request_Instance === null){
-            return $this->Request_Instance = new Request($this->RequestParam,$this->ApiPath);
-        }else{
-            return $this->Request_Instance;
-        }
-    }
+    private function Load(){
+        require_once dirname(__FILE__).DIRECTORY_SEPARATOR.'Function'.DIRECTORY_SEPARATOR.'DI.php';
+        require_once dirname(__FILE__).DIRECTORY_SEPARATOR.'Function'.DIRECTORY_SEPARATOR.'Function.php';
 
-    public function Response(){
-        if($this->Response_Instance === null){
-            return $this->Response_Instance = new Response();
-        }else{
-            return $this->Response_Instance;
-        }
     }
 
     public function Run(array $RequestParam = array()){
@@ -47,7 +33,8 @@ class Xapi
         }else{
             $this->RequestParam['api'] = $_GET['api'];
         }
-        $this->Response()->ResponseData  = $this->Request()->ReturnData;
+        DI()->request->ApiPath = $this->ApiPath;
+        DI()->request->Run($this->RequestParam);
     }
 }
 
@@ -56,7 +43,6 @@ function classLoader($class)
     $path = str_replace('\\', DIRECTORY_SEPARATOR, $class);
     $class = basename($path);
     $file = __DIR__ . DIRECTORY_SEPARATOR  . $class . DIRECTORY_SEPARATOR . $class . '.php';
-
     if (file_exists($file)) {
         require_once $file;
     }

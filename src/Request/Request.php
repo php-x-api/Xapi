@@ -1,14 +1,27 @@
 <?php
-namespace Xapi;
+
 class Request
 {
-//    public $RequestParam;
-//
+    private $RequestParam;
+
+    private $Instance = null;
+
     public $ApiPath;
-//
-    public function __construct($RequestParam,$ApiPath){
+
+    public function Run(array $RequestParam = array()){
         $this->RequestParam = $RequestParam;
-        $this->ApiPath = $ApiPath;
+        $this->call();
+    }
+
+    public function ApiInstance($controller=null){
+        if($this->Instance === null){
+            return $this->Instance = new $controller;
+        }else{
+            return $this->Instance;
+        }
+    }
+
+    private function call(){
         $service = explode('.',$this->RequestParam['api']);
         if(count($service) == 2){
             list($controller,$func) = $service;
@@ -16,10 +29,13 @@ class Request
             if(file_exists($this->ApiPath.'/Api/'.$controller.'.php')){
                 require_once $this->ApiPath.'/Api/'.$controller.'.php';
                 if(class_exists($controller)){
-                    $class = new $controller;
-                    if(method_exists($class,$func)){
-                        $Rule = $this->getApiRule($class,$func);
-                        $this->ReturnData = call_user_func(array($class,$func));
+                    $this->ApiInstance($controller);
+                    if(method_exists($this->ApiInstance(),$func)){
+                        $Rule = $this->GetApiRule($func);
+                        if(count($Rule[$func]) > 0){
+                            $this->ValidData($Rule[$func]);
+                        }
+                        DI()->response->ResponseData = call_user_func(array($this->ApiInstance(),$func));
                     }else{
                         //API方法不存在 抛出异常
                         echo "4";
@@ -38,20 +54,40 @@ class Request
         }
     }
 
-    private function Validate(){
+    private function ValidData($Rule){
+        $valid = true;
+        foreach($Rule as $k=>$v){
+             $validSingleton = true;
+            if(isset($this->RequestParam[$k])){
+                var_dump($k);
+                var_dump($this->RequestParam[$k]);
+                var_dump($v);
 
+
+            }else{
+                if(isset($v['required']) && $v['required'] == true){
+                    $validSingleton = false;
+                }
+            }
+            if($validSingleton){
+
+            }else{
+
+            }
+        }
     }
 
     #获取API规则
-    private function getApiRule($class,$func)
+    private function GetApiRule($func)
     {
-        $Rule = $class->ApiParamRules();
-//        var_dump($Rule);
-//        if(){
-//
-//        }
-//
-        return array('state'=>true,'code'=>'200');
+        $Rule =  $this->ApiInstance()->ApiParamRules();
+        if(isset($Rule[$func]) && is_array($Rule[$func]) && !empty($Rule[$func])){
+            return $Rule;
+        }else{
+            return array();
+        }
+
+
 
 
 //        $VerifyState = true;

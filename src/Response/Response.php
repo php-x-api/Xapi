@@ -1,21 +1,41 @@
 <?php
-namespace Xapi;
+
 class Response
 {
-    public $ResponseData;
-
     private $ououtputDatatput;
 
-    public function setMsg($msg){
-        $this->ououtputDatatput['msg'] = $msg;
+    public $code;
+
+    public $msg;
+
+    protected $headers = array();
+
+    public $ResponseData;
+
+    public function __construct()
+    {
 
     }
 
-    public function setCode($code){
-        $this->ououtputDatatput['code'] = $code;
+    public function SetCode($code)
+    {
+        $this->code = $code;
     }
 
-    public function output(){
+    public function SetMsg($msg)
+    {
+        $this->msg = $msg;
+    }
+
+    public function addHeaders($key,$value)
+    {
+        $this->headers[$key] = $value;
+    }
+
+    public function output()
+    {
+        $this->ououtputDatatput['code'] =  $this->code;
+        $this->ououtputDatatput['msg'] = $this->msg;
         $this->ououtputDatatput['data'] = $this->ResponseData;
         echo json_encode($this->ououtputDatatput);
     }

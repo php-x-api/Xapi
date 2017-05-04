@@ -1,15 +1,5 @@
 <?php
 
-abstract class Api   {
-    public $entity = null;
-
-    static function init(){
-
-    }
-
-
-
+abstract class Api  {
     abstract function ApiParamRules();
-
-
 }

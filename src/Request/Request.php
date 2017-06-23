@@ -26,8 +26,8 @@ class Request
         if(count($service) == 2){
             list($controller,$func) = $service;
             unset($this->RequestParam['api']);
-            if(file_exists($this->ApiPath.'/Api/'.$controller.'.php')){
-                require_once $this->ApiPath.'/Api/'.$controller.'.php';
+            if(file_exists($this->ApiPath.DIRECTORY_SEPARATOR.'Api'.DIRECTORY_SEPARATOR.$controller.'.php')){
+                require_once $this->ApiPath.DIRECTORY_SEPARATOR.'Api'.DIRECTORY_SEPARATOR.$controller.'.php';
                 if(class_exists($controller)){
                     $this->ApiInstance($controller);
                     if(method_exists($this->ApiInstance(),$func)){
@@ -55,26 +55,31 @@ class Request
     }
 
     private function ValidData($Rule){
-        $valid = true;
         foreach($Rule as $k=>$v){
-             $validSingleton = true;
+            $validSingleton = true;
             if(isset($this->RequestParam[$k])){
-                var_dump($k);
-                var_dump($this->RequestParam[$k]);
+
+
+
+//                var_dump($k);
                 var_dump($v);
+                $this->LoadFormat($v['type']);
 
 
+//                var_dump($this->RequestParam[$k]);
             }else{
                 if(isset($v['required']) && $v['required'] == true){
                     $validSingleton = false;
+                    break;
                 }
             }
             if($validSingleton){
-
+                $this->ApiInstance()->$k = $this->RequestParam[$k];
             }else{
 
             }
         }
+//        var_dump($this->ApiInstance());
     }
 
     #获取API规则
@@ -129,6 +134,16 @@ class Request
 //    {
 //
 //    }
+
+    private function LoadFormat($type){
+        $typeFilePath = dirname(__FILE__).DIRECTORY_SEPARATOR.'Format'.DIRECTORY_SEPARATOR.ucfirst($type).'.php';
+        if(file_exists($typeFilePath)){
+            require_once $typeFilePath;
+        }else{
+
+        }
+        var_dump($typeFilePath);
+    }
 
 }
 ?>

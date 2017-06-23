@@ -4,7 +4,7 @@ class Response
 {
     private $ououtputDatatput;
 
-    public $code;
+    public $code = '200';
 
     public $msg;
 

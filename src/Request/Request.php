@@ -26,8 +26,8 @@ class Request
         if(count($service) == 2){
             list($controller,$func) = $service;
             unset($this->RequestParam['api']);
-            if(file_exists($this->ApiPath.DIRECTORY_SEPARATOR.'Api'.DIRECTORY_SEPARATOR.$controller.'.php')){
-                require_once $this->ApiPath.DIRECTORY_SEPARATOR.'Api'.DIRECTORY_SEPARATOR.$controller.'.php';
+            if(file_exists($this->ApiPath.'/Api/'.$controller.'.php')){
+                require_once $this->ApiPath.'/Api/'.$controller.'.php';
                 if(class_exists($controller)){
                     $this->ApiInstance($controller);
                     if(method_exists($this->ApiInstance(),$func)){
@@ -38,48 +38,46 @@ class Request
                         DI()->response->ResponseData = call_user_func(array($this->ApiInstance(),$func));
                     }else{
                         //API方法不存在 抛出异常
-                        echo "4";
+                        DI()->response->SetCode("404");
+                        DI()->response->SetMsg(T('404'));
                     }
                 }else{
                     //API类不存在 抛出异常
-                    echo "3";
+                    DI()->response->SetCode("403");
+                    DI()->response->SetMsg(T('403'));
                 }
             }else{
                 //API处理文件不存在抛出异常
-                echo "2";
+                DI()->response->SetCode("402");
+                DI()->response->SetMsg(T('402'));
             }
         }else{
             //请求的API参数不能分割 抛出异常
-            echo "1";
+            DI()->response->SetCode("401");
+            DI()->response->SetMsg(T('401'));
         }
     }
 
     private function ValidData($Rule){
+        $valid = true;
         foreach($Rule as $k=>$v){
-            $validSingleton = true;
+             $validSingleton = true;
             if(isset($this->RequestParam[$k])){
-
-
-
-//                var_dump($k);
+                var_dump($k);
+                var_dump($this->RequestParam[$k]);
                 var_dump($v);
-                $this->LoadFormat($v['type']);
 
-
-//                var_dump($this->RequestParam[$k]);
             }else{
                 if(isset($v['required']) && $v['required'] == true){
                     $validSingleton = false;
-                    break;
                 }
             }
             if($validSingleton){
-                $this->ApiInstance()->$k = $this->RequestParam[$k];
+
             }else{
 
             }
         }
-//        var_dump($this->ApiInstance());
     }
 
     #获取API规则
@@ -134,16 +132,6 @@ class Request
 //    {
 //
 //    }
-
-    private function LoadFormat($type){
-        $typeFilePath = dirname(__FILE__).DIRECTORY_SEPARATOR.'Format'.DIRECTORY_SEPARATOR.ucfirst($type).'.php';
-        if(file_exists($typeFilePath)){
-            require_once $typeFilePath;
-        }else{
-
-        }
-        var_dump($typeFilePath);
-    }
 
 }
 ?>

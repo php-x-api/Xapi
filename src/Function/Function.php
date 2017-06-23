@@ -2,41 +2,25 @@
 function DI() {
     return DI::init();
 }
-DI()->request;
 
-//$G_X = null;
-//X();
-//function X(){
-//    global $G_X;
-//    if($G_X == null){
-//        $G_X = new G_X();
-//        return $G_X;
-//    }else{
-//        return $G_X;
-//    }
-//}
+function T($code){
+    $languagePath = dirname(__DIR__).DIRECTORY_SEPARATOR.'Language'.DIRECTORY_SEPARATOR;
+    foreach(scandir(dirname(__DIR__).DIRECTORY_SEPARATOR.'Language'.DIRECTORY_SEPARATOR) as $v){
+        if(pathinfo($v)['extension'] == "php"){
+            $language = require $languagePath.$v;
 
-
-class G_X {
-
-    private $code;
-
-    private $msg;
-
-    public function SetCode($code){
-        $this->code = $code;
+        }
     }
-
-    public function GetCode(){
-        return $this->code;
-    }
-
-    public function setMsg($msg){
-        $this->msg = $msg;
-    }
-
-    public function GetMsg($msg){
-        $this->msg = $msg;
+    if(isset($language[$code])){
+        if(isset($language[$code]['zh-cn'])){
+            return $language[$code]['zh-cn'];
+        }else{
+            return 'zh-cn错误信息未设置';
+        }
+    }else{
+        return '错误信息未设置';
     }
 }
+
+
 

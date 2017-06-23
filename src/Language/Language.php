@@ -1,12 +1,7 @@
 <?php
-/**
- * Created by PhpStorm.
- * User  :  liulei
- * Date  :  2017/3/27
- * Time  :  下午5:50
- * Email :  lei.liu@linkim.com.cn
- * Organization : 上海凌晋信息技术有限公司
- */
 return array(
-
+    '401'=>['zh-cn'=>'请求接口错误'],
+    '402'=>['zh-cn'=>'接口模块未找到'],
+    '403'=>['zh-cn'=>'接口模块未实现'],
+    '404'=>['zh-cn'=>'接口未找到']
 );

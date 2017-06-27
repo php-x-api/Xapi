@@ -6,6 +6,8 @@ class Request
 
     private $Instance = null;
 
+    private $FormatterInstance = null;
+
     public $ApiPath;
 
     public function Run(array $RequestParam = array()){
@@ -31,53 +33,58 @@ class Request
                 if(class_exists($controller)){
                     $this->ApiInstance($controller);
                     if(method_exists($this->ApiInstance(),$func)){
+                        $ValidState = true;
                         $Rule = $this->GetApiRule($func);
                         if(count($Rule[$func]) > 0){
-                            $this->ValidData($Rule[$func]);
+                            $valid = $this->ValidData($Rule[$func]);
+                            if(!$valid['state']){
+                                $ValidState = false;
+//                                DI()->response->SetCode("400");
+                            }
                         }
-                        DI()->response->ResponseData = call_user_func(array($this->ApiInstance(),$func));
+                        if($ValidState){
+                            DI()->response->ResponseData = call_user_func(array($this->ApiInstance(),$func));
+                        }
                     }else{
                         //API方法不存在 抛出异常
-                        DI()->response->SetCode("404");
-                        DI()->response->SetMsg(T('404'));
+                        DI()->response->SetCode("504");
                     }
                 }else{
                     //API类不存在 抛出异常
-                    DI()->response->SetCode("403");
-                    DI()->response->SetMsg(T('403'));
+                    DI()->response->SetCode("503");
                 }
             }else{
                 //API处理文件不存在抛出异常
-                DI()->response->SetCode("402");
-                DI()->response->SetMsg(T('402'));
+                DI()->response->SetCode("502");
             }
         }else{
             //请求的API参数不能分割 抛出异常
-            DI()->response->SetCode("401");
-            DI()->response->SetMsg(T('401'));
+            DI()->response->SetCode("501");
         }
     }
 
     private function ValidData($Rule){
-        $valid = true;
+        $valid = array();
         foreach($Rule as $k=>$v){
-             $validSingleton = true;
-            if(isset($this->RequestParam[$k])){
-                var_dump($k);
-                var_dump($this->RequestParam[$k]);
-                var_dump($v);
-
-            }else{
-                if(isset($v['required']) && $v['required'] == true){
+            $validSingleton = true;
+            if(isset($v['required']) && ($v['required'] == true) ){
+                if(!isset($this->RequestParam[$k])){
                     $validSingleton = false;
+                    DI()->response->SetCode("400");
+                    DI()->response->SetMsg(T("400",$k));
+                    $valid =  array('state'=>false);
                 }
             }
             if($validSingleton){
-
+                $this->GetFormatterInstance()->validation($v,$this->RequestParam[$k]);
+                $valid =  array('state'=>true);
+                $this->ApiInstance()->$k = $this->RequestParam[$k];
             }else{
-
+                return $valid;
             }
         }
+        return $valid;
+
     }
 
     #获取API规则
@@ -89,49 +96,16 @@ class Request
         }else{
             return array();
         }
-
-
-
-
-//        $VerifyState = true;
-//        if(isset($Rule[$func]) && is_array($Rule[$func]) && count($Rule[$func]) > 0){
-//            foreach($Rule[$func] as $k=>$v){
-//                if($v['type'] == 'array'){
-//
-//                }else{
-//                    $Verify = $this->VerifyParam($k,$this->RequestParam,$v);
-//                    if($Verify['state'] == true){
-//                        $class->$k = $this->RequestParam[$k];
-//                    }else{
-//                        $VerifyState = false;
-//                        break;
-//                    }
-//                }
-//            }
-//        }
-//        if($VerifyState){
-//            //如果没有参数验证失败 则执行API
-////            $ret = call_user_func(array($class,$func));
-//        }else{
-//            //有参数验证未通过 返回错误
-//            return $Verify;
-//        }
     }
-//
-//    private function VerifyParam($ParamName,$Param,$ParamRule){
-//        if(isset($ParamRule['required']) && $ParamRule['required'] == true ){
-//            if(isset($Param[$ParamName])){
-//                return array('state'=>true);
-//            }else{
-//                return array('state'=>false,'err'=>[]);
-//            }
-//        }
-//    }
-//
-//    function __destruct()
-//    {
-//
-//    }
+
+    private function GetFormatterInstance()
+    {
+        if($this->FormatterInstance === null){
+            return $this->FormatterInstance = new Formatter();
+        }else{
+            return $this->FormatterInstance;
+        }
+    }
 
 }
 ?>

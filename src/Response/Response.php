@@ -6,7 +6,7 @@ class Response
 
     public $code = '200';
 
-    public $msg;
+    public $msg = null;
 
     protected $headers = array();
 
@@ -34,9 +34,12 @@ class Response
 
     public function output()
     {
+        if(empty($this->msg)){
+            $this->msg = T($this->code);
+        }
         $this->ououtputDatatput['code'] =  $this->code;
         $this->ououtputDatatput['msg'] = $this->msg;
         $this->ououtputDatatput['data'] = $this->ResponseData;
-        echo json_encode($this->ououtputDatatput);
+        echo json_encode($this->ououtputDatatput,JSON_UNESCAPED_UNICODE);
     }
 }

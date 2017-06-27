@@ -14,8 +14,8 @@ class Xapi
     }
 
     private function Load(){
-        require_once dirname(__FILE__).DIRECTORY_SEPARATOR.'Function'.DIRECTORY_SEPARATOR.'DI.php';
-        require_once dirname(__FILE__).DIRECTORY_SEPARATOR.'Function'.DIRECTORY_SEPARATOR.'Function.php';
+        require dirname(__FILE__).DIRECTORY_SEPARATOR.'Function'.DIRECTORY_SEPARATOR.'DI.php';
+        require dirname(__FILE__).DIRECTORY_SEPARATOR.'Function'.DIRECTORY_SEPARATOR.'Function.php';
 
     }
 
@@ -44,7 +44,14 @@ function classLoader($class)
     $class = basename($path);
     $file = __DIR__ . DIRECTORY_SEPARATOR  . $class . DIRECTORY_SEPARATOR . $class . '.php';
     if (file_exists($file)) {
-        require_once $file;
+        require $file;
+    }else{
+        if( ! (strpos($class,'Formatter') === false )){
+            $file = __DIR__ . DIRECTORY_SEPARATOR.substr_replace($class,'Formatter'.DIRECTORY_SEPARATOR.'Formatter',0,9).'.php';
+            if (file_exists($file)) {
+                require $file;
+            }
+        }
     }
 }
 spl_autoload_register('Xapi\classLoader');

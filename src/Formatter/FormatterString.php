@@ -31,8 +31,4 @@ class FormatterString extends Formatter{
             return true;
         }
     }
-
-    private function ReturnData($param){
-        return $this->daddslashes($param);
-    }
 }

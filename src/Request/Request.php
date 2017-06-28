@@ -29,20 +29,21 @@ class Request
             list($controller,$func) = $service;
             unset($this->RequestParam['api']);
             if(file_exists($this->ApiPath.'/Api/'.$controller.'.php')){
-                require_once $this->ApiPath.'/Api/'.$controller.'.php';
+                require $this->ApiPath.'/Api/'.$controller.'.php';
                 if(class_exists($controller)){
                     $this->ApiInstance($controller);
                     if(method_exists($this->ApiInstance(),$func)){
                         $ValidState = true;
+                        //获取API参数列表
                         $Rule = $this->GetApiRule($func);
                         if(count($Rule[$func]) > 0){
                             $valid = $this->ValidData($Rule[$func]);
                             if(!$valid['state']){
                                 $ValidState = false;
-//                                DI()->response->SetCode("400");
                             }
                         }
                         if($ValidState){
+                            //验证通过 调用API
                             DI()->response->ResponseData = call_user_func(array($this->ApiInstance(),$func));
                         }
                     }else{
@@ -66,25 +67,31 @@ class Request
     private function ValidData($Rule){
         $valid = array();
         foreach($Rule as $k=>$v){
-            $validSingleton = true;
+            $RequiredState = true;
             if(isset($v['required']) && ($v['required'] == true) ){
                 if(!isset($this->RequestParam[$k])){
-                    $validSingleton = false;
+                    $RequiredState = false;
                     DI()->response->SetCode("400");
                     DI()->response->SetMsg(T("400",$k));
                     $valid =  array('state'=>false);
                 }
             }
-            if($validSingleton){
-                $this->GetFormatterInstance()->validation($v,$this->RequestParam[$k]);
-                $valid =  array('state'=>true);
-                $this->ApiInstance()->$k = $this->RequestParam[$k];
+            if($RequiredState){
+                $FormatValidState = $this->GetFormatterInstance()->validation($v,$this->RequestParam[$k]);
+                if($FormatValidState['state']){
+                    $valid =  array('state'=>true);
+                    $this->ApiInstance()->$k = $this->RequestParam[$k];
+                }else{
+                    DI()->response->SetCode($FormatValidState['code']);
+                    DI()->response->SetMsg(T($FormatValidState['code'],array('key'=>$k,'rule'=>$FormatValidState['rule'])));
+                    $valid =  array('state'=>false);
+                    break;
+                }
             }else{
-                return $valid;
+                break;
             }
         }
         return $valid;
-
     }
 
     #获取API规则

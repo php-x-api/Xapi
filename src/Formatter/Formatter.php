@@ -19,7 +19,7 @@ class Formatter
         $diff = array_diff(array_keys($rules),$support);
         if(empty($diff)){
             $state = true;
-            foreach(array_keys($rules) as $v){
+            foreach(array_keys($rules) as $k=>$v){
                 $Valid = call_user_func_array(array($class,$v),array($param,$rules[$v]));
                 if(!$Valid){
                     $state = false;
@@ -29,11 +29,11 @@ class Formatter
             if($state){
                 return array('state'=>true);
             }else{
-                var_dump('验证未通过');
+                return array('state'=>false,'code'=>'401','rule'=>$v);
             }
         }else{
             //使用了不支持的校验方式
-            var_dump('不存在的验证规则');
+            return array('state'=>false,'code'=>'402');
         }
     }
 
@@ -67,5 +67,8 @@ class Formatter
         return $string;
     }
 
+    public function ReturnData($param){
+        return $this->daddslashes($param);
+    }
 
 }

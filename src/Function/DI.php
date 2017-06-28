@@ -17,9 +17,12 @@ class DI implements ArrayAccess{
 
     public $Response;
 
+    public $Language;
+
     public function __construct() {
 
     }
+
     public static function init() {
         if (self::$instance == NULL) {
             self::$instance = new DI();
